@@ -1,9 +1,14 @@
 package co.skepper.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
+import java.sql.Blob;
 
 @Entity
 @Table(name="books")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Book {
 
     @Id
@@ -11,8 +16,14 @@ public class Book {
     private Long id;
 
     private String title;
-    private String text;
 
+    @JsonIgnore
+    @Lob
+    private Blob textFile;
+
+    private String fileType;
+
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "authorId")
     private Author author;
@@ -21,9 +32,10 @@ public class Book {
 
     }
 
-    public Book(String title, String text, Author author){
+    public Book(String title, Blob file, String type, Author author){
         this.title = title;
-        this.text = text;
+        this.textFile = file;
+        this.fileType = type;
         this.author = author;
     }
 
@@ -31,8 +43,12 @@ public class Book {
         return id;
     }
 
-    public String getText() {
-        return text;
+    public Blob getTextFile() {
+        return textFile;
+    }
+
+    public String getFileType() {
+        return fileType;
     }
 
     public Author getAuthor() {
@@ -47,8 +63,12 @@ public class Book {
         this.title = title;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setTextFile(Blob text) {
+        this.textFile = text;
+    }
+
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
     }
 
     public void setAuthor(Author author) {
