@@ -2,8 +2,10 @@ package co.skepper.services.authors;
 
 import co.skepper.models.Author;
 import co.skepper.models.Book;
+import co.skepper.models.Page;
 import co.skepper.repositories.AuthorsRepository;
 import co.skepper.repositories.BooksRepository;
+import co.skepper.repositories.PagesRepository;
 import co.skepper.services.authors.AuthorsService;
 import co.skepper.utils.FileUtils;
 import org.apache.poi.POIXMLDocument;
@@ -37,6 +39,9 @@ public class AuthorsServiceImpl implements AuthorsService {
     @Autowired
     private BooksRepository booksRepository;
 
+    @Autowired
+    private PagesRepository pagesRepository;
+
     @Override
     public List<Author> findAll() {
         return authorsRepository.findAll();
@@ -58,30 +63,24 @@ public class AuthorsServiceImpl implements AuthorsService {
 
         if (author != null) {
 
-            try {
-                Blob textBlob = new javax.sql.rowset.serial.SerialBlob(bookFile.getBytes());
+            Book book = new Book();
+            book.setAuthor(author);
+            book.setTitle(title);
+            book.setFileType(extractType(bookFile.getOriginalFilename()));
+            String content = FileUtils.readDocFile(bookFile);
 
-                Book book = new Book();
-                book.setAuthor(author);
-                book.setTextFile(textBlob);
-                book.setTitle(title);
-                book.setFileType(extractType(bookFile.getOriginalFilename()));
+            List<Page> pages = contentToPages(content, book);
 
-                booksRepository.saveAndFlush(book);
+            book.setPages(pages);
 
-                author.addBook(book);
-                author = authorsRepository.saveAndFlush(author);
+            booksRepository.saveAndFlush(book);
 
-                String content = FileUtils.readDocFile(textBlob, extractType(bookFile.getOriginalFilename()));
-                System.out.println(content);
+            pages.stream()
+                    .forEach(page -> pagesRepository.saveAndFlush(page));
 
-            }
-            catch(IOException e){
-                e.printStackTrace();
-            }
-            catch(SQLException e){
-                e.printStackTrace();
-            }
+
+            author.addBook(book);
+            author = authorsRepository.saveAndFlush(author);
 
         }
 
@@ -93,7 +92,34 @@ public class AuthorsServiceImpl implements AuthorsService {
         authorsRepository.deleteById(id);
     }
 
-    private String extractType(String filename){
+    private List<Page> contentToPages(String content, Book book) {
+        List<Page> result = new ArrayList<>();
+        int pageIndex = 0;
+        String text = "";
+
+        result.add(new Page());
+        result.get(0).setBook(book);
+
+        for (int i = 0; i < content.length(); i++) {
+            text += content.charAt(i);
+
+            if (i % Page.MAX_CHARACTERS == 0) {
+                result.get(pageIndex).setContent(text);
+                text = "";
+                pageIndex++;
+                result.add(new Page());
+                result.get(pageIndex).setBook(book);
+            }
+        }
+
+        if (!text.equals("")) {
+            result.get(pageIndex).setContent(text);
+        }
+
+        return result;
+    }
+
+    private String extractType(String filename) {
         int dotIndex = filename.lastIndexOf('.');
 
         return filename.substring(dotIndex + 1).trim().toLowerCase();

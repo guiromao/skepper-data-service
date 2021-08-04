@@ -2,9 +2,11 @@ package co.skepper.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.sql.Blob;
+import java.util.List;
 
 @Entity
 @Table(name="books")
@@ -18,8 +20,8 @@ public class Book {
     private String title;
 
     @JsonIgnore
-    @Lob
-    private Blob textFile;
+    @OneToMany(mappedBy="book")
+    private List<Page> pages;
 
     private String fileType;
 
@@ -32,9 +34,9 @@ public class Book {
 
     }
 
-    public Book(String title, Blob file, String type, Author author){
+    public Book(String title, List<Page> pages, String type, Author author){
         this.title = title;
-        this.textFile = file;
+        this.pages = pages;
         this.fileType = type;
         this.author = author;
     }
@@ -43,8 +45,8 @@ public class Book {
         return id;
     }
 
-    public Blob getTextFile() {
-        return textFile;
+    public List<Page> getPages() {
+        return pages;
     }
 
     public String getFileType() {
@@ -63,8 +65,8 @@ public class Book {
         this.title = title;
     }
 
-    public void setTextFile(Blob text) {
-        this.textFile = text;
+    public void setPages(List<Page> pages) {
+        this.pages = pages;
     }
 
     public void setFileType(String fileType) {

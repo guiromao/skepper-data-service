@@ -15,4 +15,6 @@ public interface BooksService {
 
     void deleteBook(Long id);
 
+    void printBookOnConsole(Long id);
+
 }

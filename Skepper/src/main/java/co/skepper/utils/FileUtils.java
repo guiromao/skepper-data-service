@@ -15,32 +15,25 @@ import java.util.List;
 
 public class FileUtils {
 
-    public static String readDocFile(Blob textBlob, String type) {
-        File file = null;
+    public static String readDocFile(MultipartFile book) {
         String content = "";
+        String filename = book.getOriginalFilename();
 
         try {
-            file = createFile(textBlob.getBytes(1, (int) textBlob.length()));
-        }
-        catch(SQLException e){
-            e.printStackTrace();
-        }
-
-        try {
-            if (type.equals("doc")) { //Judge the file format
-                InputStream fis = new FileInputStream(file);
+            if (filename.endsWith(".doc")) { //Judge the file format
+                InputStream fis = book.getInputStream();
                 WordExtractor wordExtractor = new WordExtractor(fis);//Use the WordExtractor class in the HWPF component to extract text or paragraphs from a Word document
                 for (String words : wordExtractor.getParagraphText()) {//Get paragraph content
                     content += words + "\n";
                 }
                 fis.close();
             }
-            if (type.equals("docx")) {
+            if (filename.endsWith(".docx")) {
                 File uFile = new File("tempFile.docx");//Create a temporary file
                 if (!uFile.exists()) {
                     uFile.createNewFile();
                 }
-                FileCopyUtils.copy(textBlob.getBytes(1, (int)textBlob.length()), uFile);//Copy file content
+                FileCopyUtils.copy(book.getBytes(), uFile);//Copy file content
                 OPCPackage opcPackage = POIXMLDocument.openPackage("tempFile.docx");//Contain all common functions of POI OOXML document class, open a file package.
                 XWPFDocument document = new XWPFDocument(opcPackage);//Use XWPF component XWPFDocument class to get the document content
                 List<XWPFParagraph> paras = document.getParagraphs();
