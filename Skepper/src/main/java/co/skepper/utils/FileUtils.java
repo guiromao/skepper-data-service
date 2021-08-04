@@ -1,5 +1,11 @@
 package co.skepper.utils;
 
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.parser.PdfTextExtractor;
+import org.apache.pdfbox.cos.COSDocument;
+import org.apache.pdfbox.pdfparser.PDFParser;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -50,6 +56,23 @@ public class FileUtils {
         return content;
     }
 
+    public static String readPdfFile(MultipartFile file) {
+        String content = "";
+
+        try {
+            PdfReader reader = new PdfReader(file.getOriginalFilename());
+            for (int i = 1; i <= reader.getNumberOfPages(); i++) {
+                content += PdfTextExtractor.getTextFromPage(reader, i);
+            }
+            reader.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return content;
+    }
+
     public static String readTextFile(MultipartFile file) {
         String result = "";
 
@@ -62,7 +85,7 @@ public class FileUtils {
         return result;
     }
 
-    private static File createFile(byte [] bytes){
+    private static File createFile(byte[] bytes) {
         File file = new File("book");
 
         try {
@@ -77,13 +100,19 @@ public class FileUtils {
 
             // Close the file
             os.close();
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("Exception: " + e);
         }
 
         return file;
+    }
+
+    private static File convertMultiPartToFile(MultipartFile file) throws IOException {
+        File convFile = new File(file.getOriginalFilename());
+        FileOutputStream fos = new FileOutputStream(convFile);
+        fos.write(file.getBytes());
+        fos.close();
+        return convFile;
     }
 
 }

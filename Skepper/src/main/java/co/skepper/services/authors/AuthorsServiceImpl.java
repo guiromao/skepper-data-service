@@ -67,17 +67,14 @@ public class AuthorsServiceImpl implements AuthorsService {
             book.setAuthor(author);
             book.setTitle(title);
             book.setFileType(extractType(bookFile.getOriginalFilename()));
-            String content = FileUtils.readDocFile(bookFile);
+            String content = retrieveContentFrom(bookFile, book.getFileType());
 
             List<Page> pages = contentToPages(content, book);
 
             book.setPages(pages);
-
             booksRepository.saveAndFlush(book);
 
-            pages.stream()
-                    .forEach(page -> pagesRepository.saveAndFlush(page));
-
+            pages.stream().forEach(page -> pagesRepository.saveAndFlush(page));
 
             author.addBook(book);
             author = authorsRepository.saveAndFlush(author);
@@ -117,6 +114,21 @@ public class AuthorsServiceImpl implements AuthorsService {
         }
 
         return result;
+    }
+
+    private String retrieveContentFrom(MultipartFile file, String type){
+        String content = "";
+
+        switch(type){
+            case "doc":
+            case "docx": content = FileUtils.readDocFile(file); break;
+
+            case "pdf": content = FileUtils.readPdfFile(file); break;
+
+            default: content = FileUtils.readTextFile(file); break;
+        }
+
+        return content;
     }
 
     private String extractType(String filename) {
