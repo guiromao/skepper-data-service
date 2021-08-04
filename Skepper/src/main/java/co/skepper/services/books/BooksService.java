@@ -17,4 +17,5 @@ public interface BooksService {
 
     void printBookOnConsole(Long id);
 
+    void sneakPeek(Long bookId);
 }

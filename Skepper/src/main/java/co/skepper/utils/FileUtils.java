@@ -15,8 +15,6 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.sql.Blob;
-import java.sql.SQLException;
 import java.util.List;
 
 public class FileUtils {
@@ -85,34 +83,5 @@ public class FileUtils {
         return result;
     }
 
-    private static File createFile(byte[] bytes) {
-        File file = new File("book");
-
-        try {
-            // Initialize a pointer
-            // in file using OutputStream
-            OutputStream
-                    os
-                    = new FileOutputStream(file);
-
-            // Starts writing the bytes in it
-            os.write(bytes);
-
-            // Close the file
-            os.close();
-        } catch (Exception e) {
-            System.out.println("Exception: " + e);
-        }
-
-        return file;
-    }
-
-    private static File convertMultiPartToFile(MultipartFile file) throws IOException {
-        File convFile = new File(file.getOriginalFilename());
-        FileOutputStream fos = new FileOutputStream(convFile);
-        fos.write(file.getBytes());
-        fos.close();
-        return convFile;
-    }
 
 }

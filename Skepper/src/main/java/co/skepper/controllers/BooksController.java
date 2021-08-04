@@ -31,4 +31,11 @@ public class BooksController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    @GetMapping("/{bookId}/sneakpeek")
+    public ResponseEntity sneakPeek(@PathVariable Long bookId){
+        booksService.sneakPeek(bookId);
+
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
 }

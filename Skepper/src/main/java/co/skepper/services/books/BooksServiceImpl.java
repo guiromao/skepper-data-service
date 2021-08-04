@@ -48,4 +48,17 @@ public class BooksServiceImpl implements BooksService {
         }
     }
 
+    @Override
+    public void sneakPeek(Long bookId){
+        Optional<Book> maybeBook = findById(bookId);
+
+        if(maybeBook.isPresent()){
+            Book book = maybeBook.get();
+            int maxPages = (int) Math.round(book.getPages().size() * 0.75);
+            int actualPage = (int) Math.ceil(Math.random() * maxPages);
+            String content = book.getPages().get(actualPage).getContent();
+            System.out.println(content);
+        }
+    }
+
 }
