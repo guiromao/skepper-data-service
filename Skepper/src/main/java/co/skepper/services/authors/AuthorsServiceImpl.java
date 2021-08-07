@@ -89,6 +89,11 @@ public class AuthorsServiceImpl implements AuthorsService {
         authorsRepository.deleteById(id);
     }
 
+    @Override
+    public List<Author> findByName(String name) {
+        return authorsRepository.findByNameContains(name);
+    }
+
     private List<Page> contentToPages(String content, Book book) {
         List<Page> result = new ArrayList<>();
         int pageIndex = 0;

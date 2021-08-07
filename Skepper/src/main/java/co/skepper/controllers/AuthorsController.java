@@ -25,6 +25,11 @@ public class AuthorsController {
         return new ResponseEntity<>(authorsService.findAll(), HttpStatus.OK);
     }
 
+    @GetMapping("/find")
+    public ResponseEntity<List<Author>> findAuthors(@RequestParam String name){
+        return new ResponseEntity<>(authorsService.findByName(name), HttpStatus.OK);
+    }
+
     @PostMapping({"", "/"})
     public ResponseEntity insertAuthor(@RequestBody Author author) {
         HttpStatus status = authorsService.saveAuthor(author) != null ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST;
