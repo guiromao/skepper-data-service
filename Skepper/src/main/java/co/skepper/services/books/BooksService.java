@@ -20,4 +20,6 @@ public interface BooksService {
     void sneakPeek(Long bookId);
 
     List<Book> findByTitle(String text);
+
+    List<Book> findLongBooks();
 }

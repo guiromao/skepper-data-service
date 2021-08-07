@@ -40,4 +40,9 @@ public class BooksController {
         return new ResponseEntity<>(booksService.findByTitle(title), HttpStatus.OK);
     }
 
+    @GetMapping("/long")
+    public ResponseEntity<List<Book>> findLongBooks(){
+        return new ResponseEntity<>(booksService.findLongBooks(), HttpStatus.OK);
+    }
+
 }

@@ -66,4 +66,9 @@ public class BooksServiceImpl implements BooksService {
         return booksRepository.findByTitleContains(text);
     }
 
+    @Override
+    public List<Book> findLongBooks() {
+        return booksRepository.searchLongBooks();
+    }
+
 }
