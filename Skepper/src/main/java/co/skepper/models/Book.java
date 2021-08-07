@@ -1,5 +1,6 @@
 package co.skepper.models;
 
+import co.skepper.enums.Genre;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Type;
@@ -7,6 +8,7 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 import java.sql.Blob;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name="books")
@@ -18,6 +20,8 @@ public class Book {
     private Long id;
 
     private String title;
+
+    private Set<Genre> genres;
 
     @JsonIgnore
     @OneToMany(mappedBy="book")
@@ -34,9 +38,10 @@ public class Book {
 
     }
 
-    public Book(String title, List<Page> pages, String type, Author author){
+    public Book(String title, List<Page> pages, Set<Genre> genres, String type, Author author){
         this.title = title;
         this.pages = pages;
+        this.genres = genres;
         this.fileType = type;
         this.author = author;
     }
@@ -47,6 +52,10 @@ public class Book {
 
     public List<Page> getPages() {
         return pages;
+    }
+
+    public Set<Genre> getGenres() {
+        return genres;
     }
 
     public String getFileType() {
@@ -67,6 +76,10 @@ public class Book {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public void setGenres(Set<Genre> genres) {
+        this.genres = genres;
     }
 
     public void setPages(List<Page> pages) {
