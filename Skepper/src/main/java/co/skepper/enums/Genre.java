@@ -1,25 +1,45 @@
 package co.skepper.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+import java.util.stream.Stream;
+
 public enum Genre {
 
-    POETRY(1),
-    ROMANCE(2),
-    DRAMA(3),
-    PLAY(4),
-    TERROR(5),
-    SCIFI(6),
-    RELIGIOUS(7),
-    HISTORY(8),
-    PHILOSOPHY(9);
+    POETRY("Poetry"),
 
-    private int number;
+    ROMANCE("Romance"),
 
-    Genre(int number){
-        this.number = number;
+    DRAMA("Drama"),
+
+    PLAY("Play"),
+
+    TERROR("Terror"),
+
+    SCIFI("SciFi"),
+
+    RELIGIOUS("Religious"),
+
+    HISTORY("History"),
+
+    PHILOSOPHY("Philosophy");
+
+    private String category;
+
+    Genre(String category){
+        this.category = category;
     }
 
-    public int getNumber(){
-        return number;
+    @JsonCreator
+    public static Genre decode(final String code) {
+        return Stream.of(Genre.values()).filter(targetEnum -> targetEnum.category.equalsIgnoreCase(code))
+                .findFirst().orElse(null);
+    }
+
+    @JsonValue
+    public String getCategory() {
+        return category;
     }
 
 }

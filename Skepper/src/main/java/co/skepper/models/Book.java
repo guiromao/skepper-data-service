@@ -3,10 +3,7 @@ package co.skepper.models;
 import co.skepper.enums.Genre;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.annotations.Type;
-
 import javax.persistence.*;
-import java.sql.Blob;
 import java.util.List;
 import java.util.Set;
 
@@ -21,6 +18,10 @@ public class Book {
 
     private String title;
 
+    @ElementCollection(targetClass = Genre.class)
+    @JoinTable(name = "genres", joinColumns = @JoinColumn(name = "id"))
+    @Column(name = "genre", nullable = false)
+    @Enumerated(EnumType.STRING)
     private Set<Genre> genres;
 
     @JsonIgnore
@@ -34,6 +35,8 @@ public class Book {
     @JoinColumn(name = "authorId")
     private Author author;
 
+    private Long views;
+
     public Book(){
 
     }
@@ -44,6 +47,18 @@ public class Book {
         this.genres = genres;
         this.fileType = type;
         this.author = author;
+        this.views = 0l;
+    }
+
+    public void addGenre(Genre genre){
+        genres.add(genre);
+    }
+
+    public void incrementViews(){
+        if(views == null){
+            views = 0l;
+        }
+        views++;
     }
 
     public Long getId() {
@@ -70,6 +85,10 @@ public class Book {
         return title;
     }
 
+    public Long getViews() {
+        return views;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -92,6 +111,10 @@ public class Book {
 
     public void setAuthor(Author author) {
         this.author = author;
+    }
+
+    public void setViews(long views) {
+        this.views = views;
     }
 }
 

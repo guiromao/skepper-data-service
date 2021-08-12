@@ -25,6 +25,11 @@ public class AuthorsController {
         return new ResponseEntity<>(authorsService.findAll(), HttpStatus.OK);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Author> findAuthor(@PathVariable Long id){
+        return new ResponseEntity<>(authorsService.findById(id).orElseGet(null), HttpStatus.OK);
+    }
+
     @GetMapping("/find")
     public ResponseEntity<List<Author>> findAuthors(@RequestParam String name){
         return new ResponseEntity<>(authorsService.findByName(name), HttpStatus.OK);

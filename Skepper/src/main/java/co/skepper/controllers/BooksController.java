@@ -1,6 +1,8 @@
 package co.skepper.controllers;
 
+import co.skepper.enums.Genre;
 import co.skepper.models.Book;
+import co.skepper.models.dtos.BookDTO;
 import co.skepper.services.books.BooksService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("api/v1/books")
@@ -22,10 +26,11 @@ public class BooksController {
     }
 
     @GetMapping("/{bookId}")
-    public ResponseEntity printBookOnConsole(@PathVariable Long bookId){
+    public ResponseEntity<Book> getBook(@PathVariable Long bookId){
         booksService.printBookOnConsole(bookId);
+        booksService.incrementViews(bookId);
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(booksService.findById(bookId), HttpStatus.OK);
     }
 
     @GetMapping("/{bookId}/sneakpeek")
@@ -43,6 +48,16 @@ public class BooksController {
     @GetMapping("/long")
     public ResponseEntity<List<Book>> findLongBooks(){
         return new ResponseEntity<>(booksService.findLongBooks(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{bookId}/pages")
+    public ResponseEntity<Map<String, String>> pagesOfBook(@PathVariable Long bookId){
+        return new ResponseEntity<>(booksService.pagesOfBook(bookId), HttpStatus.OK);
+    }
+
+    @PutMapping("/{bookId}/genres")
+    public ResponseEntity editGenres(@PathVariable Long bookId, @RequestBody BookDTO bookDto){
+        return new ResponseEntity(booksService.editGenres(bookId, bookDto.getGenres()), HttpStatus.OK);
     }
 
 }

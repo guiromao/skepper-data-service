@@ -1,5 +1,6 @@
 package co.skepper.services.books;
 
+import co.skepper.enums.Genre;
 import co.skepper.models.Book;
 import co.skepper.repositories.BooksRepository;
 import co.skepper.services.books.BooksService;
@@ -7,8 +8,7 @@ import co.skepper.utils.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -69,6 +69,47 @@ public class BooksServiceImpl implements BooksService {
     @Override
     public List<Book> findLongBooks() {
         return booksRepository.searchLongBooks();
+    }
+
+    @Override
+    public Book editGenres(Long bookId, Set<Genre> genres) {
+        Optional<Book> maybeBook = booksRepository.findById(bookId);
+        Book book = maybeBook.orElse(null);
+
+        if(null != book){
+            genres.forEach((genre) -> {
+                if(genre != null){
+                    book.addGenre(genre);
+                }
+            });
+            booksRepository.saveAndFlush(book);
+        }
+
+        return book;
+    }
+
+    @Override
+    public void incrementViews(Long bookId) {
+        Book book = booksRepository.findById(bookId).orElse(null);
+
+        if(book != null){
+            book.incrementViews();
+            booksRepository.saveAndFlush(book);
+        }
+    }
+
+    @Override
+    public Map<String, String> pagesOfBook(Long bookId) {
+        Map<String, String> pagesMap = new HashMap<>();
+
+        Book book = booksRepository.findById(bookId).orElseGet(null);
+
+        if(book != null){
+            pagesMap.put("Title", book.getTitle());
+            pagesMap.put("Number of Pages", String.valueOf(book.getPages().size()));
+        }
+
+        return pagesMap;
     }
 
 }

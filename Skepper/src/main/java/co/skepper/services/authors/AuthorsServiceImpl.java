@@ -59,10 +59,9 @@ public class AuthorsServiceImpl implements AuthorsService {
 
     @Override
     public Author addBook(Long id, String title, MultipartFile bookFile) {
-        Author author = findById(id).isPresent() ? findById(id).get() : null;
+        Author author = findById(id).orElse(null);
 
         if (author != null) {
-
             Book book = new Book();
             book.setAuthor(author);
             book.setTitle(title);
@@ -78,7 +77,6 @@ public class AuthorsServiceImpl implements AuthorsService {
 
             author.addBook(book);
             author = authorsRepository.saveAndFlush(author);
-
         }
 
         return author;
