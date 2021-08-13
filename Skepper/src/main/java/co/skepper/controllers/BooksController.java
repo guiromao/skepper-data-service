@@ -57,7 +57,9 @@ public class BooksController {
 
     @PutMapping("/{bookId}/genres")
     public ResponseEntity editGenres(@PathVariable Long bookId, @RequestBody BookDTO bookDto){
-        return new ResponseEntity(booksService.editGenres(bookId, bookDto.getGenres()), HttpStatus.OK);
+        booksService.editGenres(bookId, bookDto.getGenres());
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 
 }
