@@ -3,6 +3,7 @@ package co.skepper.controllers;
 import co.skepper.enums.Genre;
 import co.skepper.models.Book;
 import co.skepper.models.dtos.BookDTO;
+import co.skepper.models.dtos.GenresDTO;
 import co.skepper.services.books.BooksService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -56,8 +57,8 @@ public class BooksController {
     }
 
     @PutMapping("/{bookId}/genres")
-    public ResponseEntity editGenres(@PathVariable Long bookId, @RequestBody BookDTO bookDto){
-        booksService.editGenres(bookId, bookDto.getGenres());
+    public ResponseEntity editGenres(@PathVariable Long bookId, @RequestBody GenresDTO genres){
+        booksService.editGenres(bookId, genres.getGenres());
 
         return new ResponseEntity(HttpStatus.OK);
     }
